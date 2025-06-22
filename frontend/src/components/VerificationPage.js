@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import API_URL from '../apiConfig';
 
 const VerificationPage = () => {
   const [did, setDid] = useState('');
@@ -19,7 +20,7 @@ const VerificationPage = () => {
     }
 
     try {
-      const response = await fetch(`/api/verify/${did}`);
+      const response = await fetch(`${API_URL}/verify/${did}`);
       const result = await response.json();
 
       if (response.ok) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeSVG as QRCode } from 'qrcode.react';
+import API_URL from '../apiConfig';
 
 const RegistrationForm = () => {
   const [schools, setSchools] = useState([]);
@@ -22,7 +23,7 @@ const RegistrationForm = () => {
     // Fetch schools from the API
     const fetchSchools = async () => {
       try {
-        const response = await fetch('/api/schools');
+        const response = await fetch(`${API_URL}/schools`);
         if (response.ok) {
           const data = await response.json();
           setSchools(data);
@@ -59,7 +60,7 @@ const RegistrationForm = () => {
     data.append('selfie', files.selfie);
 
     try {
-      const response = await fetch('/api/register-athlete', {
+      const response = await fetch(`${API_URL}/register-athlete`, {
         method: 'POST',
         body: data,
       });
