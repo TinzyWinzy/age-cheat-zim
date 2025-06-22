@@ -1,0 +1,95 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+
+### 🧠 **AI Agent Prompt: Blockchain Age Verification System**
+
+> You are an expert full-stack developer agent working on a **Blockchain-Based Age Verification System** for youth athletes in Zimbabwe. The goal is to prevent age cheating in sports by building a secure digital ID system integrated with blockchain and biometrics.
+>
+> **Mission:**
+> Build a working MVP (minimum viable product) that allows:
+>
+> * School or tournament officials to register student-athletes
+> * A digital ID (DID) to be issued with linked verifiable credentials (VC)
+> * Biometric photo to be attached for uniqueness
+> * A tamper-proof birth date to be verified via web/mobile
+> * Organizers to scan or query and verify age eligibility instantly
+>
+> ---
+>
+> ### ✅ Requirements:
+>
+> #### Tech Stack:
+>
+> * **Frontend:** React + Tailwind (admin + verifier portal)
+> * **Mobile-first version:** Flutter (for registration and scanning)
+> * **Blockchain:** Polygon ID or Hyperledger Indy for DID & VC
+> * **Biometrics:** Selfie + optional fingerprint placeholder using OpenCV (mocked for prototype)
+> * **Backend:** Node.js + Express (API to issue/retrieve DIDs, credentials)
+> * **Database:** PostgreSQL (for user records, school metadata, logs)
+> * **Storage:** IPFS for storing signed VC documents (mock Pinata/IPFS)
+> * **Hosting (dev):** Firebase or Vercel (for frontend) + Render/Railway for backend
+>
+> ---
+>
+> ### 🛠️ Tasks:
+>
+> 1. **Smart Identity Core:**
+>
+>    * Generate a DID per athlete using `did:polygonid` or `did:key`
+>    * Create a verifiable credential (VC) containing: name, birth date, school, sport, biometric hash
+>    * Store VC metadata to IPFS and link to athlete DID
+> 2. **Athlete Registration Page (React):**
+>
+>    * Fields: full name, date of birth, gender, school ID, sport
+>    * Upload birth certificate (PDF), selfie
+>    * "Register" button triggers VC creation and shows a QR code (DID)
+> 3. **Verification Page (React):**
+>
+>    * Input: DID or scan QR
+>    * Output: verified name, date of birth, school, VC validation result
+>    * Age eligibility (e.g., U-17) highlighted
+> 4. **Mobile Scanner (Flutter):**
+>
+>    * Camera scan for QR code from ID card or phone
+>    * Pull VC from backend via DID
+>    * Display "Verified" or "Invalid/Age Mismatch"
+> 5. **API Server (Node.js + Express):**
+>
+>    * POST `/register-athlete` – takes form input, issues VC, stores metadata
+>    * GET `/verify/:did` – fetches VC from IPFS, validates, returns age verification result
+> 6. **Database Schema (PostgreSQL):**
+>
+>    * `athletes`: name, dob, gender, school\_id, sport, did, ipfs\_hash, registered\_at
+>    * `schools`: name, province, zimsec\_code
+>    * `vc_logs`: actions, timestamp, actor
+> 7. **Security and Integrity:**
+>
+>    * Use signed JWT or DID Auth for admin access
+>    * Ensure all endpoints use HTTPS
+>    * Log every registration and verification event
+>
+> ---
+>
+> ### 🧪 Testing Mode:
+>
+> * Allow mock registration with random data for 5 dummy schools
+> * Run locally with Docker support for PostgreSQL
+> * IPFS can be mocked using `ipfs-http-client` and public gateway
+>
+> ---
+>
+> ### 📦 Deliverables:
+>
+> * `/frontend`: React + Tailwind portal for admin and verifiers
+> * `/mobile`: Flutter app for tournament officials
+> * `/backend`: Node.js Express API
+> * `/contracts`: VC issuance module using Polygon ID or Hyperledger Indy
+> * `docker-compose.yml` for local testing
+> * `.env.example` and README for setup
+
+---
+

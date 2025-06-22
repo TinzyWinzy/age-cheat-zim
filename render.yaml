@@ -1,0 +1,35 @@
+# render.yaml
+# This file configures the services for deployment on Render.
+# See https://render.com/docs/blueprint-spec for a full reference.
+
+services:
+  # 1. PostgreSQL Database
+  - type: pserv
+    name: age-fraud-db
+    plan: free # Or your preferred plan
+    postgres:
+      version: "14"
+
+  # 2. Node.js Backend Service
+  - type: web
+    name: age-fraud-api
+    plan: free # Or your preferred plan
+    runtime: node
+    repo: https://github.com/TinzyWinzy/age-cheat-zim # <-- IMPORTANT: Replace with your repo URL
+    rootDir: ./backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromService:
+          type: pserv
+          name: age-fraud-db
+          property: connectionString
+      - key: CORS_ORIGIN
+        value: https://your-vercel-frontend-url.vercel.app # <-- IMPORTANT: Replace with your Vercel URL after deployment
+      - key: ISSUER_PRIVATE_KEY
+        sync: false # Prevent this secret from being exposed in the blueprint
+      - key: PINATA_API_KEY
+        sync: false
+      - key: PINATA_SECRET_API_KEY
+        sync: false 
