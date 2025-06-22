@@ -1,74 +1,76 @@
 const db = require('./db');
 
-const createTables = async () => {
-  const schoolTableQuery = `
-    CREATE TABLE IF NOT EXISTS schools (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      province VARCHAR(100),
-      zimsec_code VARCHAR(50) UNIQUE
-    );
-  `;
-
-  const athleteTableQuery = `
-    CREATE TABLE IF NOT EXISTS athletes (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      dob DATE NOT NULL,
-      gender VARCHAR(10),
-      school_id INTEGER REFERENCES schools(id),
-      sport VARCHAR(100),
-      did VARCHAR(255) UNIQUE,
-      ipfs_hash VARCHAR(255),
-      private_key VARCHAR(255) NOT NULL,
-      registered_at TIMESTAMPTZ DEFAULT NOW()
-    );
-  `;
-
-  const vcLogsTableQuery = `
-    CREATE TABLE IF NOT EXISTS vc_logs (
-      id SERIAL PRIMARY KEY,
-      action VARCHAR(255) NOT NULL,
-      timestamp TIMESTAMPTZ DEFAULT NOW(),
-      actor VARCHAR(255)
-    );
-  `;
-
+const createAndSeed = async () => {
+  const client = await db.pool.connect(); // Use the pool from db.js to get a client
   try {
-    console.log('Dropping existing tables...');
-    await db.query('DROP TABLE IF EXISTS vc_logs, athletes, schools CASCADE;');
-    console.log('Tables dropped.');
+    console.log('Beginning database initialization...');
+    await client.query('BEGIN');
 
-    console.log('Creating tables...');
-    await db.query(schoolTableQuery);
-    await db.query(athleteTableQuery);
-    await db.query(vcLogsTableQuery);
-    console.log('Tables created successfully.');
+    // Create tables only if they don't exist
+    const createSchemaQuery = `
+      CREATE TABLE IF NOT EXISTS schools (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        province VARCHAR(100),
+        zimsec_code VARCHAR(50) UNIQUE
+      );
+      
+      CREATE TABLE IF NOT EXISTS athletes (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        dob DATE NOT NULL,
+        gender VARCHAR(10),
+        school_id INTEGER REFERENCES schools(id),
+        sport VARCHAR(100),
+        did VARCHAR(255) UNIQUE,
+        ipfs_hash VARCHAR(255),
+        private_key VARCHAR(255) NOT NULL,
+        registered_at TIMESTAMPTZ DEFAULT NOW()
+      );
+      
+      CREATE TABLE IF NOT EXISTS vc_logs (
+        id SERIAL PRIMARY KEY,
+        action VARCHAR(255) NOT NULL,
+        timestamp TIMESTAMPTZ DEFAULT NOW(),
+        actor VARCHAR(255)
+      );
+    `;
+    await client.query(createSchemaQuery);
+    console.log('Schema validation complete. Tables are ready.');
 
-    await seedSchools();
+    // Check if schools are already seeded
+    const { rows } = await client.query('SELECT COUNT(*) FROM schools');
+    if (rows[0].count === '0') {
+      console.log('No schools found. Seeding database...');
+      const insertSchoolsQuery = `
+        INSERT INTO schools (name, province, zimsec_code) VALUES
+        ('Prince Edward School', 'Harare', '6701'),
+        ('St. George''s College', 'Harare', '6702'),
+        ('Falcon College', 'Matabeleland South', '6801'),
+        ('Peterhouse Boys'' School', 'Mashonaland East', '6901'),
+        ('Churchill School', 'Harare', '6703');
+      `;
+      await client.query(insertSchoolsQuery);
+      console.log('Schools seeded successfully.');
+    } else {
+      console.log('Schools table is already seeded. Skipping.');
+    }
+
+    await client.query('COMMIT');
+    console.log('Database initialization committed successfully.');
   } catch (err) {
-    console.error('Error creating tables', err.stack);
+    await client.query('ROLLBACK');
+    console.error('Database initialization failed:', err.stack);
+    process.exit(1); // Exit with an error code to stop the deployment
   } finally {
-    // In a real app you might want to close the pool, but for a script it's ok
+    client.release(); // Release the client back to the pool
   }
 };
 
-const seedSchools = async () => {
-  const insertSchoolsQuery = `
-    INSERT INTO schools (name, province, zimsec_code) VALUES
-    ('Prince Edward School', 'Harare', '6701'),
-    ('St. George''s College', 'Harare', '6702'),
-    ('Falcon College', 'Matabeleland South', '6801'),
-    ('Peterhouse Boys'' School', 'Mashonaland East', '6901'),
-    ('Churchill School', 'Harare', '6703');
-  `;
-  try {
-    console.log('Seeding schools...');
-    await db.query(insertSchoolsQuery);
-    console.log('Schools seeded successfully.');
-  } catch (err) {
-    console.error('Error seeding schools', err.stack);
-  }
+const runInit = async () => {
+  await createAndSeed();
+  // We need to explicitly close the pool to allow the script to exit.
+  await db.pool.end(); 
 };
 
-createTables(); 
+runInit(); 
