@@ -7,8 +7,7 @@ services:
   - type: pserv
     name: age-fraud-db
     plan: free # Or your preferred plan
-    postgres:
-      version: "14"
+    postgresMajorVersion: 14
 
   # 2. Node.js Backend Service
   - type: web
