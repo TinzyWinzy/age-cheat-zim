@@ -1,12 +1,12 @@
 const db = require('./db');
 
 const createAndSeed = async () => {
-  const client = await db.pool.connect(); // Use the pool from db.js to get a client
+  const client = await db.pool.connect();
   try {
-    console.log('Beginning database initialization...');
+    console.log('Beginning database initialization as part of server startup...');
     await client.query('BEGIN');
 
-    // Create tables only if they don't exist
+    // Combined query to create all tables if they don't exist
     const createSchemaQuery = `
       CREATE TABLE IF NOT EXISTS schools (
         id SERIAL PRIMARY KEY,
@@ -14,7 +14,6 @@ const createAndSeed = async () => {
         province VARCHAR(100),
         zimsec_code VARCHAR(50) UNIQUE
       );
-      
       CREATE TABLE IF NOT EXISTS athletes (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
@@ -27,7 +26,6 @@ const createAndSeed = async () => {
         private_key VARCHAR(255) NOT NULL,
         registered_at TIMESTAMPTZ DEFAULT NOW()
       );
-      
       CREATE TABLE IF NOT EXISTS vc_logs (
         id SERIAL PRIMARY KEY,
         action VARCHAR(255) NOT NULL,
@@ -36,9 +34,9 @@ const createAndSeed = async () => {
       );
     `;
     await client.query(createSchemaQuery);
-    console.log('Schema validation complete. Tables are ready.');
+    console.log('Schema validation complete.');
 
-    // Check if schools are already seeded
+    // Check if schools are already seeded to prevent re-seeding
     const { rows } = await client.query('SELECT COUNT(*) FROM schools');
     if (rows[0].count === '0') {
       console.log('No schools found. Seeding database...');
@@ -53,24 +51,18 @@ const createAndSeed = async () => {
       await client.query(insertSchoolsQuery);
       console.log('Schools seeded successfully.');
     } else {
-      console.log('Schools table is already seeded. Skipping.');
+      console.log('Schools table is already seeded.');
     }
 
     await client.query('COMMIT');
     console.log('Database initialization committed successfully.');
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error('Database initialization failed:', err.stack);
-    process.exit(1); // Exit with an error code to stop the deployment
+    console.error('Database initialization failed during server startup:', err.stack);
+    throw err; // Re-throw the error to be handled by the main app process
   } finally {
     client.release(); // Release the client back to the pool
   }
 };
 
-const runInit = async () => {
-  await createAndSeed();
-  // We need to explicitly close the pool to allow the script to exit.
-  await db.pool.end(); 
-};
-
-runInit(); 
+module.exports = { createAndSeed }; 
