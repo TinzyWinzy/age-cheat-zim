@@ -103,4 +103,39 @@ router.get('/schools', async (req, res) => {
   }
 });
 
+// GET /dashboard-stats
+router.get('/dashboard-stats', async (req, res) => {
+    try {
+        const athletesCountQuery = db.query('SELECT COUNT(*) FROM athletes');
+        const schoolsCountQuery = db.query('SELECT COUNT(*) FROM schools');
+        const logsCountQuery = db.query('SELECT COUNT(*) FROM vc_logs WHERE action LIKE \'Verified DID%\'');
+
+        const [athletesCount, schoolsCount, logsCount] = await Promise.all([
+            athletesCountQuery,
+            schoolsCountQuery,
+            logsCountQuery,
+        ]);
+
+        res.json({
+            totalAthletes: parseInt(athletesCount.rows[0].count, 10),
+            totalSchools: parseInt(schoolsCount.rows[0].count, 10),
+            totalVerifications: parseInt(logsCount.rows[0].count, 10),
+        });
+    } catch (err) {
+        console.error(err.stack);
+        res.status(500).json({ message: 'Error fetching dashboard stats' });
+    }
+});
+
+// GET /activity-log
+router.get('/activity-log', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM vc_logs ORDER BY timestamp DESC LIMIT 10');
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err.stack);
+        res.status(500).json({ message: 'Error fetching activity log' });
+    }
+});
+
 module.exports = router;

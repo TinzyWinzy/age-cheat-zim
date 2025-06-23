@@ -1,4 +1,16 @@
 import React, { useState } from 'react';
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Card,
+  Alert,
+  Spinner,
+  InputGroup,
+  ListGroup,
+} from 'react-bootstrap';
 import API_URL from '../apiConfig';
 
 const VerificationPage = () => {
@@ -25,8 +37,9 @@ const VerificationPage = () => {
 
       if (response.ok) {
         setVerificationResult(result);
-        setMessage({ type: 'success', text: 'Credential verified successfully.'})
+        setMessage(null);
       } else {
+        setVerificationResult(null);
         setMessage({ type: 'danger', text: result.message || 'Verification failed.' });
       }
     } catch (error) {
@@ -48,69 +61,106 @@ const VerificationPage = () => {
     return age;
   };
 
+  const renderResult = () => {
+    if (!verificationResult && !message) return null;
+
+    if (message && message.type === 'danger') {
+      return (
+        <Card className="mt-4 shadow-sm" border="danger">
+          <Card.Header className="bg-danger text-white">
+            <h5 className="mb-0">
+              <i className="bi bi-x-octagon-fill me-2"></i>Verification Failed
+            </h5>
+          </Card.Header>
+          <Card.Body>
+            <Alert variant="danger" className="mb-0">{message.text}</Alert>
+          </Card.Body>
+        </Card>
+      );
+    }
+
+    if (verificationResult) {
+      return (
+        <Card className="mt-4 shadow-sm" border="success">
+          <Card.Header className="bg-success text-white">
+            <h5 className="mb-0">
+              <i className="bi bi-patch-check-fill me-2"></i>Credential Verified
+            </h5>
+          </Card.Header>
+          <Card.Body>
+            <ListGroup variant="flush">
+              <ListGroup.Item>
+                <strong>Name:</strong> {verificationResult.name}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <strong>Age:</strong> {calculateAge(verificationResult.dob)}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <strong>Date of Birth:</strong> {new Date(verificationResult.dob).toLocaleDateString()}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <strong>Sport:</strong> {verificationResult.sport}
+              </ListGroup.Item>
+              <ListGroup.Item className="text-muted">
+                <small><strong>DID:</strong> <code className="bg-light p-1 rounded">{verificationResult.did}</code></small>
+              </ListGroup.Item>
+            </ListGroup>
+          </Card.Body>
+        </Card>
+      );
+    }
+    
+    return null;
+  };
+
   return (
-    <div>
-      <div className="text-center mb-5">
-        <h2 className="card-title mb-2">Verify Athlete Credentials</h2>
-        <p className="lead text-muted">Instantly verify an athlete's age and status using their DID.</p>
-      </div>
-      
-      <form onSubmit={handleVerify}>
-        <div className="mb-3">
-          <label className="form-label" htmlFor="did">
-            <i className="bi bi-person-vcard-fill me-2"></i>Athlete's Digital ID (DID)
-          </label>
-          <input
-            type="text"
-            id="did"
-            value={did}
-            onChange={(e) => setDid(e.target.value)}
-            className="form-control form-control-lg"
-            placeholder="did:key:mock:..."
-            required
-          />
-        </div>
-        <div className="d-grid">
-            <button type="submit" className="btn btn-primary btn-lg" disabled={isLoading}>
-                {isLoading ? (
-                    <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Verifying...
-                    </>
-                ) : (
-                    'Verify'
-                )}
-            </button>
-        </div>
-      </form>
+    <Container className="my-5">
+      <Row className="justify-content-center">
+        <Col md={8} lg={6}>
+          <Card className="shadow-sm">
+            <Card.Header as="h3" className="text-center bg-dark text-white">
+              Verify Athlete Credential
+            </Card.Header>
+            <Card.Body className="p-4">
+              <p className="text-center text-muted mb-4">
+                Instantly verify an athlete's age and status using their Digital ID.
+              </p>
+              <Form onSubmit={handleVerify}>
+                <InputGroup className="mb-3">
+                  <Form.Control
+                    size="lg"
+                    type="text"
+                    id="did"
+                    value={did}
+                    onChange={(e) => setDid(e.target.value)}
+                    placeholder="did:key:..."
+                    aria-label="Athlete's Digital ID"
+                    required
+                  />
+                  <Button type="submit" variant="primary" size="lg" disabled={isLoading}>
+                    {isLoading ? (
+                      <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                    ) : (
+                      <i className="bi bi-search"></i>
+                    )}
+                  </Button>
+                </InputGroup>
+              </Form>
 
-      {message && (
-        <div className={`alert alert-${message.type} mt-4`} role="alert">
-          {message.text}
-        </div>
-      )}
+              {message && message.type === 'warning' && (
+                  <Alert variant="warning" className="mt-3">
+                      {message.text}
+                  </Alert>
+              )}
 
-      {verificationResult && (
-        <div className="mt-4 p-4 border-start border-5 border-success rounded bg-light">
-            <h3 className="h5 mb-3">
-                <i className="bi bi-patch-check-fill text-success me-2"></i>
-                Verification Result: <span className="text-success fw-bold">Verified</span>
-            </h3>
-            <hr />
-            <div className="row">
-                <div className="col-md-6">
-                    <p><strong>Name:</strong> {verificationResult.name}</p>
-                    <p><strong>Age:</strong> {calculateAge(verificationResult.dob)}</p>
-                    <p className="mb-md-0"><strong>Sport:</strong> {verificationResult.sport}</p>
-                </div>
-                <div className="col-md-6">
-                    <p><strong>Date of Birth:</strong> {new Date(verificationResult.dob).toLocaleDateString()}</p>
-                    <p className="mb-0"><strong>DID:</strong> <code>{verificationResult.did}</code></p>
-                </div>
-            </div>
-        </div>
-      )}
-    </div>
+            </Card.Body>
+          </Card>
+          
+          {renderResult()}
+
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
