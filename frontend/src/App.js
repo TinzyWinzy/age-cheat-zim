@@ -5,6 +5,8 @@ import AppNavbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
 import BlockchainLogViewer from './components/BlockchainLogViewer';
 import FraudAlertPanel from './components/FraudAlertPanel';
+import TeamCardPage from './components/TeamCardPage';
+import PrivacyPolicy from './components/PrivacyPolicy';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
             <Route path="/verify" element={<VerificationPage />} />
             <Route path="/logs" element={<BlockchainLogViewer />} />
             <Route path="/fraud-alerts" element={<FraudAlertPanel />} />
+            <Route path="/team-card/:did" element={<TeamCardPage />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
           </Routes>
         </main>
 

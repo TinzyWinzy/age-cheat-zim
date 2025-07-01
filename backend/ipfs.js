@@ -40,11 +40,18 @@ const uploadToIPFS = async (files) => {
   
   const metadataResult = await pinata.pinJSONToIPFS(metadata);
 
-  // The final "hash" is the CID of the metadata JSON file.
-  const ipfsHash = metadataResult.IpfsHash;
-  console.log(`Successfully uploaded files to Pinata. Main IPFS Hash (CID): ${ipfsHash}`);
-
-  return ipfsHash;
+  // Return all relevant hashes
+  return {
+    metadataHash: metadataResult.IpfsHash,
+    selfieHash: selfieResult.IpfsHash,
+    birthCertificateHash: birthCertificateResult.IpfsHash
+  };
 };
 
-module.exports = { uploadToIPFS }; 
+// Upload Team Card NFT metadata JSON to IPFS
+const uploadTeamCardMetadataToIPFS = async (metadata) => {
+  const result = await pinata.pinJSONToIPFS(metadata);
+  return result.IpfsHash;
+};
+
+module.exports = { uploadToIPFS, uploadTeamCardMetadataToIPFS }; 

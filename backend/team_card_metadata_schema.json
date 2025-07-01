@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TeamCardNFT Metadata",
+  "type": "object",
+  "properties": {
+    "athlete_did": { "type": "string", "description": "Decentralized Identifier (DID) of the athlete" },
+    "name": { "type": "string", "description": "Athlete's full name" },
+    "team": { "type": "string", "description": "Team or school name" },
+    "season": { "type": "string", "description": "Year or season" },
+    "sport": { "type": "string", "description": "Sport type" },
+    "vc_ipfs_hash": { "type": "string", "description": "IPFS hash of the Verifiable Credential" },
+    "photo_url": { "type": "string", "description": "IPFS URL to athlete's photo" },
+    "status": { "type": "string", "enum": ["Active", "Revoked"], "description": "Credential status" },
+    "issued_at": { "type": "string", "format": "date-time", "description": "Timestamp of minting" },
+    "revoked_at": { "type": "string", "format": "date-time", "description": "Timestamp if revoked" },
+    "revocation_reason": { "type": "string", "description": "Reason for revocation" }
+  },
+  "required": ["athlete_did", "name", "team", "season", "sport", "vc_ipfs_hash", "status", "issued_at"],
+  "additionalProperties": false
+} 

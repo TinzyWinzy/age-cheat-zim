@@ -21,9 +21,9 @@ const createAndSeed = async () => {
         gender VARCHAR(10),
         school_id INTEGER REFERENCES schools(id),
         sport VARCHAR(100),
-        did VARCHAR(255) UNIQUE,
-        ipfs_hash VARCHAR(255),
-        private_key VARCHAR(255) NOT NULL,
+        did TEXT UNIQUE,
+        ipfs_hash TEXT,
+        private_key TEXT NOT NULL,
         registered_at TIMESTAMPTZ DEFAULT NOW()
       );
       CREATE TABLE IF NOT EXISTS vc_logs (
@@ -46,7 +46,15 @@ const createAndSeed = async () => {
         ('St. George''s College', 'Harare', '6702'),
         ('Falcon College', 'Matabeleland South', '6801'),
         ('Peterhouse Boys'' School', 'Mashonaland East', '6901'),
-        ('Churchill School', 'Harare', '6703');
+        ('Churchill School', 'Harare', '6703'),
+        ('Girls High School', 'Harare', '6704'),
+        ('Arundel School', 'Harare', '6705'),
+        ('Chisipite Senior School', 'Harare', '6706'),
+        ('St. John''s College', 'Harare', '6707'),
+        ('St. Dominic''s Chishawasha', 'Mashonaland East', '6902'),
+        ('Speciss College', 'Harare', '6708'),
+        ('Gateway High School', 'Harare', '6709'),
+        ('Goldridge College', 'Midlands', '6802');
       `;
       await client.query(insertSchoolsQuery);
       console.log('Schools seeded successfully.');

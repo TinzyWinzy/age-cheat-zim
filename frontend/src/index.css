@@ -5,9 +5,39 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* Neon Modern Color Palette */
+  --neon-blue: #00E6FF;
+  --neon-green: #39FF14;
+  --neon-pink: #FF3EC8;
+  --deep-navy: #181A2A;
+  --charcoal-gray: #23243A;
+  --clean-white: #FFFFFF;
+  --alert-red: #FF1744;
+  --accent-yellow: #FFD600;
+  --cool-teal: #17A2B8;
+  --muted-gray: #B0B3C6;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Neon UI Custom Classes */
+.bg-neon-blue { background-color: var(--neon-blue) !important; color: var(--deep-navy) !important; }
+.bg-neon-green { background-color: var(--neon-green) !important; color: var(--deep-navy) !important; }
+.bg-neon-pink { background-color: var(--neon-pink) !important; color: var(--clean-white) !important; }
+.bg-deep-navy { background-color: var(--deep-navy) !important; color: var(--clean-white) !important; }
+.bg-charcoal-gray { background-color: var(--charcoal-gray) !important; color: var(--clean-white) !important; }
+.text-neon-blue { color: var(--neon-blue) !important; }
+.text-neon-green { color: var(--neon-green) !important; }
+.text-neon-pink { color: var(--neon-pink) !important; }
+.text-accent-yellow { color: var(--accent-yellow) !important; }
+.text-alert-red { color: var(--alert-red) !important; }
+.text-cool-teal { color: var(--cool-teal) !important; }
+.text-muted-gray { color: var(--muted-gray) !important; }
+.border-neon-blue { border-color: var(--neon-blue) !important; }
+.border-neon-green { border-color: var(--neon-green) !important; }
+.border-neon-pink { border-color: var(--neon-pink) !important; }
+.border-alert-red { border-color: var(--alert-red) !important; }

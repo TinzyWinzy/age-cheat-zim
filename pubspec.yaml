@@ -1,0 +1,6 @@
+dependencies:
+  flutter:
+    sdk: flutter
+  dart_jsonwebtoken: ^2.4.1
+  web3dart: ^2.6.1
+  convert: ^3.1.1 

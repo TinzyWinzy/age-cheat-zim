@@ -13,5 +13,12 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  face_service:
+    build:
+      context: ./backend/face_service
+    ports:
+      - '5001:5001'
+    restart: always
+
 volumes:
   db_data:
