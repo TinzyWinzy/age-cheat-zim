@@ -234,11 +234,18 @@ router.post(
       if (nftMetadataHash) {
         try {
           const athleteWalletAddress = getValidPolygonAddressFromDID(did);
+          if (!ethers.utils.isAddress(athleteWalletAddress)) {
+            throw new Error('Invalid athlete wallet address: ' + athleteWalletAddress);
+          }
           console.log('Minting NFT to athlete address:', athleteWalletAddress);
-          const sampleDid = "did:example:123";
-          const sampleVcIpfsHash = "QmExampleHash";
-          const sampleBiometricHash = ethers.utils.formatBytes32String("biohash");
-          const tx = await athleteCredential.mintCredential(athleteWalletAddress, sampleDid, sampleVcIpfsHash, sampleBiometricHash, `ipfs://${nftMetadataHash}`);
+          // Use the real DID and VC IPFS hash
+          const tx = await athleteCredential.mintCredential(
+            athleteWalletAddress,
+            did,
+            ipfsHashes.metadataHash,
+            ethers.utils.formatBytes32String('biohash'), // TODO: replace with real biometric hash if available
+            `ipfs://${nftMetadataHash}`
+          );
           const receipt = await tx.wait();
           nftTokenId = receipt && receipt.events && receipt.events[0] ? receipt.events[0].args.tokenId.toString() : null;
           // Optionally, store tokenId and URI in DB
