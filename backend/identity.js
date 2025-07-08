@@ -1,6 +1,7 @@
 const { ethers } = require('ethers');
 const { createVerifiableCredentialJwt } = require('did-jwt-vc');
 require('dotenv').config();
+const { getValidPolygonAddressFromDID } = require('./utils');
 
 // --- Issuer Setup ---
 // The issuer is the "sports authority" signing the credentials.
@@ -18,7 +19,7 @@ const didIssuer = {
 };
 
 /**
- * Generates a new Ethereum wallet for an athlete.
+ * Generates a new Polygon wallet for an athlete.
  * The public address becomes their DID, and the private key gives them control.
  * @returns {object} An object containing the athlete's DID and their private key.
  */

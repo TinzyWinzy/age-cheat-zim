@@ -6,10 +6,10 @@ const { uploadToIPFS, uploadTeamCardMetadataToIPFS } = require('./ipfs');
 const { generateAthleteIdentity, createAthleteVC } = require('./identity');
 const fetch = require('node-fetch');
 const FormData = require('form-data');
-const { ethers } = require('ethers');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { getValidPolygonAddressFromDID } = require('./utils');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -231,7 +231,7 @@ router.post(
       let nftTokenId = null;
       if (nftMetadataHash) {
         try {
-          const athleteWalletAddress = did.replace('did:ethr:', '');
+          const athleteWalletAddress = getValidPolygonAddressFromDID(did);
           const tx = await teamCardNFT.mintCard(athleteWalletAddress, `ipfs://${nftMetadataHash}`);
           const receipt = await tx.wait();
           nftTokenId = receipt && receipt.events && receipt.events[0] ? receipt.events[0].args.tokenId.toString() : null;
