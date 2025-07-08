@@ -10,6 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { getValidPolygonAddressFromDID } = require('./utils');
+const { ethers } = require('ethers');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
