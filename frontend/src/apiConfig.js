@@ -1,5 +1,3 @@
-const API_URL = process.env.NODE_ENV === 'production'
-  ? 'https://age-fraud-api-production.up.railway.app/api'
-  : 'http://localhost:3001/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://zooming-dream-production-ea15.up.railway.app/api';
 
 export default API_URL; 
