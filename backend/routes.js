@@ -16,7 +16,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 // Hardhat local node config
 const TEAM_CARD_NFT_ADDRESS = process.env.TEAM_CARD_NFT_ADDRESS || '0xYourDeployedContractAddress';
 const TEAM_CARD_NFT_ABI = require('./contracts/TeamCardNFT.json').abi;
-const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
+const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 
 // Use a local Hardhat account private key for signing transactions
 const LOCAL_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // Account #0 from Hardhat node
