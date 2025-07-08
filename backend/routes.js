@@ -16,7 +16,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Hardhat local node config
 const TEAM_CARD_NFT_ADDRESS = process.env.TEAM_CARD_NFT_ADDRESS || '0xYourDeployedContractAddress';
-if (!ethers.utils.isAddress(TEAM_CARD_NFT_ADDRESS)) {
+if (!ethers.isAddress(TEAM_CARD_NFT_ADDRESS)) {
   throw new Error('TEAM_CARD_NFT_ADDRESS is not set to a valid address! Please set it in your Railway environment variables.');
 }
 const ATHLETE_CREDENTIAL_ABI = require('./contracts/AthleteCredential.json').abi; // Updated to correct ABI file
