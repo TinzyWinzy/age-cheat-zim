@@ -11,5 +11,4 @@ RUN pip install --default-timeout=100 --no-cache-dir -r requirements.txt
 COPY app.py ./
 
 EXPOSE 5001
-
-CMD ["python", "app.py"] 
+CMD ["gunicorn", "-b", "0.0.0.0:5001", "app:app"] 

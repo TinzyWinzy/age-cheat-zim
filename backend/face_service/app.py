@@ -4,41 +4,48 @@ from deepface import DeepFace
 import numpy as np
 from PIL import Image
 import io
+import logging
 
 app = Flask(__name__)
 CORS(app)
 
+logging.basicConfig(level=logging.INFO)
+
 def get_embedding(image_bytes):
-    print("[face_service] Reading image bytes...")
+    logging.info("[face_service] Reading image bytes...")
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
-        print("[face_service] Image loaded successfully.")
+        logging.info("[face_service] Image loaded successfully.")
     except Exception as e:
-        print(f"[face_service] Error loading image: {e}")
+        logging.error(f"[face_service] Error loading image: {e}")
         raise
     try:
-        print("[face_service] Running DeepFace.represent...")
+        logging.info("[face_service] Running DeepFace.represent...")
         embedding = DeepFace.represent(img_path=np.array(img), model_name='Facenet')[0]["embedding"]
-        print("[face_service] Embedding extracted successfully.")
+        logging.info("[face_service] Embedding extracted successfully.")
         return embedding
     except Exception as e:
-        print(f"[face_service] Error extracting embedding: {e}")
+        logging.error(f"[face_service] Error extracting embedding: {e}")
         raise
+
+@app.route('/', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok'}), 200
 
 @app.route('/extract-embedding', methods=['POST'])
 def extract_embedding():
-    print("[face_service] /extract-embedding endpoint called.")
+    logging.info("[face_service] /extract-embedding endpoint called.")
     if 'image' not in request.files:
-        print("[face_service] No image uploaded in request.")
+        logging.warning("[face_service] No image uploaded in request.")
         return jsonify({'error': 'No image uploaded'}), 400
     image = request.files['image'].read()
-    print(f"[face_service] Received image of size: {len(image)} bytes.")
+    logging.info(f"[face_service] Received image of size: {len(image)} bytes.")
     try:
         embedding = get_embedding(image)
-        print("[face_service] Returning embedding response.")
+        logging.info("[face_service] Returning embedding response.")
         return jsonify({'embedding': embedding})
     except Exception as e:
-        print(f"[face_service] Error in /extract-embedding: {e}")
+        logging.error(f"[face_service] Error in /extract-embedding: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/compare-embedding', methods=['POST'])
