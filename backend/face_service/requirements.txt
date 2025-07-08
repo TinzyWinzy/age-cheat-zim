@@ -3,3 +3,4 @@ flask-cors
 deepface
 numpy
 Pillow 
+tf-keras
