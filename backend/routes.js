@@ -22,6 +22,7 @@ const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 // Use a local Hardhat account private key for signing transactions
 const LOCAL_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // Account #0 from Hardhat node
 const wallet = new ethers.Wallet(LOCAL_PRIVATE_KEY, provider);
+console.log('Using TeamCardNFT contract address:', TEAM_CARD_NFT_ADDRESS);
 const teamCardNFT = new ethers.Contract(TEAM_CARD_NFT_ADDRESS, TEAM_CARD_NFT_ABI, wallet);
 
 // Helper to get face embedding from Python service
@@ -233,6 +234,7 @@ router.post(
       if (nftMetadataHash) {
         try {
           const athleteWalletAddress = getValidPolygonAddressFromDID(did);
+          console.log('Minting NFT to athlete address:', athleteWalletAddress);
           const tx = await teamCardNFT.mintCard(athleteWalletAddress, `ipfs://${nftMetadataHash}`);
           const receipt = await tx.wait();
           nftTokenId = receipt && receipt.events && receipt.events[0] ? receipt.events[0].args.tokenId.toString() : null;

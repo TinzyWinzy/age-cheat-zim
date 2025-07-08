@@ -10,6 +10,7 @@ if (!issuerPrivateKey || !issuerPrivateKey.startsWith('0x')) {
   throw new Error("ISSUER_PRIVATE_KEY is not set correctly in the .env file. It must be a 0x-prefixed hex string.");
 }
 const issuerWallet = new ethers.Wallet(issuerPrivateKey);
+console.log('Issuer wallet address:', issuerWallet.address);
 
 // The issuer object now contains the DID and the signer, as expected by did-jwt
 const didIssuer = {
@@ -26,7 +27,7 @@ const didIssuer = {
 const generateAthleteIdentity = () => {
   const athleteWallet = ethers.Wallet.createRandom();
   const did = `did:ethr:${athleteWallet.address}`;
-  console.log(`Generated new Athlete DID: ${did}`);
+  console.log(`Generated new Athlete DID: ${did} (address: ${athleteWallet.address})`);
   return {
     did,
     privateKey: athleteWallet.privateKey,
