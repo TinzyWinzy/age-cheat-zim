@@ -16,7 +16,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Hardhat local node config
 const TEAM_CARD_NFT_ADDRESS = process.env.TEAM_CARD_NFT_ADDRESS || '0xYourDeployedContractAddress';
-const ATHLETE_CREDENTIAL_ABI = require('./contracts/TeamCardNFT.json').abi; // Update path to new ABI if renamed
+const ATHLETE_CREDENTIAL_ABI = require('./contracts/AthleteCredential.json').abi; // Updated to correct ABI file
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 
 // Use a local Hardhat account private key for signing transactions
