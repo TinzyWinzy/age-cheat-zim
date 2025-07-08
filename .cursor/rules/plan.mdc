@@ -41,7 +41,7 @@ Build a **Minimum Viable Product (MVP)** that allows:
 ## 🛠️ Core Tasks
 
 ### 1. **Smart Identity Core**
-- Generate DID per athlete: `did:polygonid` or `did:key`
+- Generate DID per athlete: `did:polygonid` or `did:key` or `did:celoid`
 - Issue a **Verifiable Credential** with:
   - Full name, date of birth, gender
   - School & sport

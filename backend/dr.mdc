@@ -1,0 +1,175 @@
+# Solidity & EVM Glossary for Dr. Vanta Halide
+
+> _"I do not build chains. I define the trust between links."_
+
+---
+
+## Table of Contents
+- [Solidity Basics](#solidity-basics)
+- [Types](#types)
+- [Functions & Modifiers](#functions--modifiers)
+- [Visibility](#visibility)
+- [State Mutability](#state-mutability)
+- [Events & Errors](#events--errors)
+- [Inheritance & Interfaces](#inheritance--interfaces)
+- [Libraries & Using For](#libraries--using-for)
+- [Contract Patterns](#contract-patterns)
+- [Security & Gas](#security--gas)
+- [Advanced: Proxies, ZK, Composability](#advanced-proxies-zk-composability)
+- [References](#references)
+
+---
+
+## Solidity Basics
+- **Contract**: Collection of code (functions) and data (state) at a blockchain address. [Docs](https://docs.soliditylang.org/en/latest/contracts.html)
+- **Pragma**: Compiler version directive, e.g. `pragma solidity ^0.8.20;`
+- **SPDX License**: Machine-readable license identifier, e.g. `// SPDX-License-Identifier: MIT`
+
+## Types
+- **Value Types**: `uint`, `int`, `bool`, `address`, `bytes1`-`bytes32`, `enum`
+- **Reference Types**: `string`, `bytes`, `array`, `struct`, `mapping`
+- **Custom Types**: `struct`, `enum`, user-defined value types
+- [Type Reference](https://docs.soliditylang.org/en/latest/types.html)
+
+## Functions & Modifiers
+- **Function**: `function name(params) visibility returns (type) { ... }`
+- **Modifiers**: Restrict/extend function behavior, e.g. `onlyOwner`, `noReentrancy`
+- **Constructor**: Special function run once at contract creation
+- **Fallback/Receive**: Handle plain Ether transfers or unknown calls
+- [Functions](https://docs.soliditylang.org/en/latest/contracts.html#functions)
+- [Modifiers](https://docs.soliditylang.org/en/latest/contracts.html#function-modifiers)
+
+## Visibility
+- **public**: Accessible externally and internally
+- **external**: Only externally (via transactions or other contracts)
+- **internal**: Only this contract and derived contracts
+- **private**: Only this contract
+- [Visibility](https://docs.soliditylang.org/en/latest/contracts.html#visibility-and-getters)
+
+## State Mutability
+- **pure**: No state read/write
+- **view**: State read, no write
+- **payable**: Can receive Ether
+- [State Mutability](https://docs.soliditylang.org/en/latest/contracts.html#state-mutability)
+
+## Events & Errors
+- **Event**: `event EventName(type indexed param, ...)` — for off-chain listeners
+- **Emit**: `emit EventName(...)`
+- **Error**: Custom error for gas-efficient reverts, e.g. `error Unauthorized(address caller);`
+- **Revert/Require/Assert**: Error handling
+- [Events](https://docs.soliditylang.org/en/latest/contracts.html#events)
+- [Errors](https://docs.soliditylang.org/en/latest/contracts.html#errors-and-the-revert-statement)
+
+## Inheritance & Interfaces
+- **Inheritance**: `contract Child is Parent { ... }`
+- **Override/Virtual**: Enable/require function overrides
+- **Abstract Contract**: Contains unimplemented functions
+- **Interface**: Only function signatures, no implementation
+- [Inheritance](https://docs.soliditylang.org/en/latest/contracts.html#inheritance)
+- [Interfaces](https://docs.soliditylang.org/en/latest/contracts.html#interfaces)
+
+## Libraries & Using For
+- **Library**: Reusable code, stateless, called via `using ... for ...`
+- **Using For**: Attach library functions to types
+- [Libraries](https://docs.soliditylang.org/en/latest/contracts.html#libraries)
+- [Using For](https://docs.soliditylang.org/en/latest/contracts.html#using-for)
+
+## Contract Patterns
+- **Ownable**: Access control via owner
+- **Pausable**: Emergency stop
+- **ReentrancyGuard**: Prevent reentrant calls
+- **Proxy/Upgradeable**: Delegate logic to implementation contract
+- **Factory**: Deploy many contracts from a single contract
+- [Common Patterns](https://docs.soliditylang.org/en/latest/common-patterns.html)
+
+## Security & Gas
+- **Gas**: Fee for computation/storage, paid in native token
+- **Checks-Effects-Interactions**: Pattern to prevent reentrancy
+- **Overflow/Underflow**: Handled natively in 0.8.x+
+- **Access Control**: Use `onlyOwner`, `roles`, or custom logic
+- **Selfdestruct**: Deprecated, use with caution
+- [Security Considerations](https://docs.soliditylang.org/en/latest/security-considerations.html)
+
+## Advanced: Proxies, ZK, Composability
+- **Proxy Pattern**: Upgradeable contracts via delegatecall (see OpenZeppelin's Proxy)
+- **Diamond Proxy**: EIP-2535, modular upgradeability
+- **ZK Integration**: Use precompiles or custom verifiers for zk-SNARK/zk-STARK proofs
+- **Composability**: Contracts can call/interact with each other via interfaces
+- **CREATE2**: Deterministic contract deployment
+- [Proxy Pattern](https://docs.openzeppelin.com/upgrades-plugins/1.x/proxies)
+- [Diamond Standard](https://eips.ethereum.org/EIPS/eip-2535)
+- [ZK Verifiers](https://docs.circom.io/getting-started/proving-circuits/)
+
+## References
+- [Solidity Official Docs](https://docs.soliditylang.org/en/latest/)
+- [Cheatsheet](https://docs.soliditylang.org/en/latest/cheatsheet.html)
+- [Security Considerations](https://docs.soliditylang.org/en/latest/security-considerations.html)
+- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/4.x/)
+- [EVM Opcodes](https://www.evm.codes/)
+
+---
+
+## Ethers.js v6 Quick Reference
+- **Docs:** [ethers v6](https://docs.ethers.org/v6/)
+- **Contract Deployment:**
+  ```js
+  const factory = await ethers.getContractFactory("MyContract");
+  const contract = await factory.deploy(...args); // Already deployed after await
+  ```
+- **Contract Interaction:**
+  ```js
+  await contract.myFunction(...args);
+  const value = await contract.myViewFunction();
+  ```
+- **Provider/Signer:**
+  ```js
+  const provider = new ethers.JsonRpcProvider(RPC_URL);
+  const signer = new ethers.Wallet(PRIVATE_KEY, provider);
+  ```
+- **Events:**
+  ```js
+  contract.on("EventName", (arg1, arg2) => { ... });
+  ```
+- **No .deployed() or .deployTransaction.wait() in v6.**
+
+---
+
+## Hardhat Quick Reference
+- **Docs:** [Hardhat](https://hardhat.org/docs/)
+- **Compile:** `npx hardhat compile`
+- **Test:** `npx hardhat test`
+- **Deploy Script:** `npx hardhat run scripts/deploy.js --network <network>`
+- **Config:** `hardhat.config.js` (networks, solidity version, plugins)
+- **Ethers Integration:** Hardhat exposes `hre.ethers` for contract deployment and testing.
+- **Ignition:** For advanced deployment modules (see `/ignition`)
+- **Environment Variables:** Use `dotenv` for secrets and RPC URLs.
+
+---
+
+## OpenZeppelin Contracts (Latest)
+- **Docs:** [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/4.x/)
+- **Install:** `npm install @openzeppelin/contracts`
+- **Common Contracts:**
+  - `Ownable`: Access control
+  - `ERC20`, `ERC721`, `ERC1155`: Token standards
+  - `Pausable`, `ReentrancyGuard`, `AccessControl`
+- **Usage Example:**
+  ```solidity
+  import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+  import "@openzeppelin/contracts/access/Ownable.sol";
+  contract MyNFT is ERC721URIStorage, Ownable { ... }
+  ```
+- **Upgradeable Contracts:** Use `@openzeppelin/contracts-upgradeable` and OpenZeppelin Upgrades plugin for proxy patterns.
+- **Security Audited:** Always prefer OpenZeppelin implementations for standard patterns.
+
+---
+
+*For advanced patterns, see the official docs linked above. This corpus is curated for rapid reference by Dr. Vanta Halide.*
+
+---
+
+*Curated for rapid reference by Dr. Vanta Halide. For deeper dives, follow the links above or consult the Solidity docs directly.*
+description:
+globs:
+alwaysApply: false
+---
