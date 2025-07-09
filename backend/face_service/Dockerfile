@@ -8,6 +8,8 @@ RUN apt-get update && apt-get install -y libgl1 libglib2.0-0 && rm -rf /var/lib/
 COPY requirements.txt ./
 RUN pip install --default-timeout=100 --no-cache-dir -r requirements.txt
 
+COPY .deepface /root/.deepface
+
 COPY app.py ./
 
 EXPOSE 5001

@@ -5,12 +5,21 @@ import numpy as np
 from PIL import Image
 import io
 import logging
+import signal
 
 app = Flask(__name__)
 CORS(app)
 
 logging.basicConfig(level=logging.INFO)
 
+class TimeoutException(Exception):
+    pass
+
+def handler(signum, frame):
+    raise TimeoutException("DeepFace embedding timed out")
+
+# To use a lighter model, change model_name to 'SFace' or 'VGG-Face' for faster inference.
+# For production, pre-bundle DeepFace weights in Docker to avoid runtime download delays.
 def get_embedding(image_bytes):
     logging.info("[face_service] Reading image bytes...")
     try:
@@ -21,7 +30,10 @@ def get_embedding(image_bytes):
         raise ValueError(f"Image loading failed: {e}")
     try:
         logging.info("[face_service] Running DeepFace.represent...")
+        signal.signal(signal.SIGALRM, handler)
+        signal.alarm(30)  # 30 seconds timeout
         result = DeepFace.represent(img_path=np.array(img), model_name='Facenet')
+        signal.alarm(0)
         logging.info(f"[face_service] DeepFace.represent result: {result}")
         if not result or not isinstance(result, list) or not result[0] or "embedding" not in result[0]:
             logging.warning(f"[face_service] No embedding returned by DeepFace. Result: {result}")
@@ -29,6 +41,9 @@ def get_embedding(image_bytes):
         embedding = result[0]["embedding"]
         logging.info("[face_service] Embedding extracted successfully.")
         return embedding
+    except TimeoutException as te:
+        logging.error(f"[face_service] DeepFace embedding timed out: {te}")
+        raise ValueError("DeepFace embedding timed out")
     except Exception as e:
         logging.error(f"[face_service] Error extracting embedding: {e}")
         raise ValueError(f"Embedding extraction failed: {e}")
