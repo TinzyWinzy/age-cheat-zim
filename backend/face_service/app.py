@@ -18,15 +18,20 @@ def get_embedding(image_bytes):
         logging.info("[face_service] Image loaded successfully.")
     except Exception as e:
         logging.error(f"[face_service] Error loading image: {e}")
-        raise
+        raise ValueError(f"Image loading failed: {e}")
     try:
         logging.info("[face_service] Running DeepFace.represent...")
-        embedding = DeepFace.represent(img_path=np.array(img), model_name='Facenet')[0]["embedding"]
+        result = DeepFace.represent(img_path=np.array(img), model_name='Facenet')
+        logging.info(f"[face_service] DeepFace.represent result: {result}")
+        if not result or not isinstance(result, list) or not result[0] or "embedding" not in result[0]:
+            logging.warning(f"[face_service] No embedding returned by DeepFace. Result: {result}")
+            raise ValueError("No embedding returned: No face detected or model error.")
+        embedding = result[0]["embedding"]
         logging.info("[face_service] Embedding extracted successfully.")
         return embedding
     except Exception as e:
         logging.error(f"[face_service] Error extracting embedding: {e}")
-        raise
+        raise ValueError(f"Embedding extraction failed: {e}")
 
 @app.route('/', methods=['GET'])
 def health():
@@ -44,9 +49,12 @@ def extract_embedding():
         embedding = get_embedding(image)
         logging.info("[face_service] Returning embedding response.")
         return jsonify({'embedding': embedding})
+    except ValueError as ve:
+        logging.error(f"[face_service] ValueError in /extract-embedding: {ve}")
+        return jsonify({'error': str(ve)}), 422
     except Exception as e:
         logging.error(f"[face_service] Error in /extract-embedding: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': f'Internal server error: {e}'}), 500
 
 @app.route('/compare-embedding', methods=['POST'])
 def compare_embedding():
